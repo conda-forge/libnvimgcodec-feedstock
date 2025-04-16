@@ -90,7 +90,7 @@ outputs:
     requirements:
       host:
         - {{ pin_subpackage('libnvimgcodec' ~ somajor, exact=True) }}
-        - cuda-version
+        - cuda-version {{ cuda_compiler_version }}
       run:
         - {{ pin_subpackage('libnvimgcodec' ~ somajor, exact=True) }}
         - {{ pin_compatible('cuda-version', min_pin="x", max_pin="x") }}
