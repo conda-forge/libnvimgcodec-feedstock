@@ -64,6 +64,8 @@ outputs:
     build:
       run_exports:
         - {{ pin_subpackage('libnvimgcodec' ~ somajor, max_pin=None) }}
+      ignore_run_exports:
+        - cuda-version
     files:
       # This recipe requires conda-build 24.7 or later
       include:
@@ -88,8 +90,10 @@ outputs:
     requirements:
       host:
         - {{ pin_subpackage('libnvimgcodec' ~ somajor, exact=True) }}
+        - cuda-version
       run:
         - {{ pin_subpackage('libnvimgcodec' ~ somajor, exact=True) }}
+        - {{ pin_compatible('cuda-version', min_pin="x", max_pin="x") }}
     test:
       files:
         - test
