@@ -26,8 +26,10 @@ source:
     - patches/0001-BLD-Use-only-dynamic-shared-library-links-to-CUDA-ta.patch
     - patches/0002-BLD-Move-CMake-config-install-directory.patch
 build:
-  number: 0
+  number: 1
   skip: true  # [cuda_compiler_version in (undefined, 'None')]
+  # Skip Windows CTK 11 because old cmake cannot find nvcc
+  skip: true  # [win and (cuda_compiler_version or "").startswith("11")]
   # Debug skips below
   # skip: true  # [py != 312]
 requirements:
@@ -64,6 +66,8 @@ outputs:
     build:
       run_exports:
         - {{ pin_subpackage('libnvimgcodec' ~ somajor, max_pin=None) }}
+      ignore_run_exports:
+        - cuda-version
     files:
       # This recipe requires conda-build 24.7 or later
       include:
@@ -88,8 +92,10 @@ outputs:
     requirements:
       host:
         - {{ pin_subpackage('libnvimgcodec' ~ somajor, exact=True) }}
+        - cuda-version {{ cuda_compiler_version }}
       run:
         - {{ pin_subpackage('libnvimgcodec' ~ somajor, exact=True) }}
+        - {{ pin_compatible('cuda-version', min_pin="x", max_pin="x") }}
     test:
       files:
         - test
@@ -132,6 +138,7 @@ outputs:
     build:
       missing_dso_whitelist:
         - '*/libcuda.so.*'  # [linux]
+        - '*/nvcuda.dll'  # [win]
       # Implement enhanced CUDA compatability for CTK packages
       ignore_run_exports:
         - cuda-version
