@@ -10,6 +10,9 @@ cd build
 
 if errorlevel 1 exit 1
 
+if defined CUDA_NVCC_EXECUTABLE (
+    set CUDACXX=%CUDA_NVCC_EXECUTABLE%
+)
 
 set NVIMG_BUILD_ARGS= ^
     -DBUILD_DOCS:BOOL=OFF ^
