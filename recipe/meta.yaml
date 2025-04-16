@@ -136,6 +136,7 @@ outputs:
     build:
       missing_dso_whitelist:
         - '*/libcuda.so.*'  # [linux]
+        - '*/nvcuda.dll'  # [win]
       # Implement enhanced CUDA compatability for CTK packages
       ignore_run_exports:
         - cuda-version
