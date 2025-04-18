@@ -26,10 +26,9 @@ source:
     - patches/0001-BLD-Use-only-dynamic-shared-library-links-to-CUDA-ta.patch
     - patches/0002-BLD-Move-CMake-config-install-directory.patch
 build:
-  number: 1
-  skip: true  # [cuda_compiler_version in (undefined, 'None')]
+  number: 2
   # Skip Windows CTK 11 because old cmake cannot find nvcc
-  skip: true  # [win and (cuda_compiler_version or "").startswith("11")]
+  skip: true  # [((cuda_compiler_version or "None") == "None") or (win and (cuda_compiler_version or "").startswith("11")) ]
   # Debug skips below
   # skip: true  # [py != 312]
 requirements:
