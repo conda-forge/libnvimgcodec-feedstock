@@ -52,7 +52,7 @@ nvimg_build_args=(
 
 cmake ${CMAKE_ARGS} -GNinja "${nvimg_build_args[@]}" ${SRC_DIR}
 
-cmake --build .
+cmake --build . -v
 
 cmake --install . --strip
 
