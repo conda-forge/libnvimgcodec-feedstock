@@ -30,7 +30,7 @@ source:
 build:
   number: 3
   # Skip Windows CTK 11 because old cmake cannot find nvcc
-  skip: true  # [((cuda_compiler_version or "None") == "None") or (win and (cuda_compiler_version or "").startswith("11")) ]
+  skip: true  # [((cuda_compiler_version or "None") == "None")]
   # Debug skips below
   # skip: true  # [py != 312]
 requirements:
