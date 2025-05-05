@@ -10,8 +10,11 @@ cd build
 
 if errorlevel 1 exit 1
 
-if defined CUDA_NVCC_EXECUTABLE (
-    set CUDACXX=%CUDA_NVCC_EXECUTABLE%
+if "%cuda_compiler_version%"=="11.8" (
+    set NVIMG_CTK_ARGS= ^
+        "-DCUDAToolkit_ROOT=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8" ^
+        "-DCMAKE_CUDA_COMPILER=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\bin\nvcc.exe"
+    set CUDAARCHS=35-real;50-real;60-real;70-real;80-real;90
 )
 
 set NVIMG_BUILD_ARGS= ^
@@ -48,11 +51,11 @@ set NVIMG_PYTHON_ARGS= ^
 
 cmake %CMAKE_ARGS% -GNinja -DCMAKE_INSTALL_PREFIX="%LIBRARY_PREFIX%" ^
     %NVIMG_BUILD_ARGS% %NVIMG_LIBRARY_ARGS% %NVIMG_EXT_ARGS% ^
-    %NVIMG_PYTHON_ARGS% %SRC_DIR%
+    %NVIMG_PYTHON_ARGS% %NVIMG_CTK_ARGS% %SRC_DIR%
 
 if errorlevel 1 exit 1
 
-cmake --build .
+cmake --build . -v
 
 if errorlevel 1 exit 1
 

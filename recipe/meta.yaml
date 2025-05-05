@@ -29,10 +29,7 @@ source:
     - patches/0004-BLD-Make-find_package-OpenCV-verbose-and-required.patch
 build:
   number: 3
-  # Skip Windows CTK 11 because old cmake cannot find nvcc
   skip: true  # [((cuda_compiler_version or "None") == "None")]
-  # Debug skips below
-  # skip: true  # [py != 312]
 requirements:
   build:
     - {{ compiler('c') }}
