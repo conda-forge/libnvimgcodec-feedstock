@@ -13,8 +13,9 @@ if errorlevel 1 exit 1
 if "%cuda_compiler_version%"=="11.8" (
     set NVIMG_CTK_ARGS= ^
         "-DCUDAToolkit_ROOT=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8" ^
-        "-DCMAKE_CUDA_COMPILER=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\bin\nvcc.exe"
-    set CUDAARCHS=35-real;50-real;60-real;70-real;80-real;90
+        "-DCMAKE_CUDA_COMPILER=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\bin\nvcc.exe" ^
+        "-DNVJPEG_INCLUDE=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include"
+    set CUDAARCHS=35;50;60;70;80;90
 )
 
 set NVIMG_BUILD_ARGS= ^
