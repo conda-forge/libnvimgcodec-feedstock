@@ -16,6 +16,17 @@ Summary: The C API development package for nvImageCodec.
 nvImageCodec is an open-source library of accelerated codecs with unified interface. This package is the C-API only. See nvimgcodec for the Python-API.
 
 
+About libnvimgcodec
+-------------------
+
+
+
+Package license: Apache-2.0
+
+Summary: The nvImageCodec runtime library.
+
+This is a runtime package only. Developers should install libnvimgcodec-dev to build with nvImageCodec.
+
 About libnvimgcodec-libjpeg-turbo-ext
 -------------------------------------
 
@@ -125,6 +136,7 @@ Current release info
 
 | Name | Downloads | Version | Platforms |
 | --- | --- | --- | --- |
+| [![Conda Recipe](https://img.shields.io/badge/recipe-libnvimgcodec-green.svg)](https://anaconda.org/conda-forge/libnvimgcodec) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libnvimgcodec.svg)](https://anaconda.org/conda-forge/libnvimgcodec) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libnvimgcodec.svg)](https://anaconda.org/conda-forge/libnvimgcodec) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libnvimgcodec.svg)](https://anaconda.org/conda-forge/libnvimgcodec) |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-libnvimgcodec--dev-green.svg)](https://anaconda.org/conda-forge/libnvimgcodec-dev) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libnvimgcodec-dev.svg)](https://anaconda.org/conda-forge/libnvimgcodec-dev) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libnvimgcodec-dev.svg)](https://anaconda.org/conda-forge/libnvimgcodec-dev) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libnvimgcodec-dev.svg)](https://anaconda.org/conda-forge/libnvimgcodec-dev) |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-libnvimgcodec--libjpeg--turbo--ext-green.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libjpeg-turbo-ext) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libnvimgcodec-libjpeg-turbo-ext.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libjpeg-turbo-ext) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libnvimgcodec-libjpeg-turbo-ext.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libjpeg-turbo-ext) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libnvimgcodec-libjpeg-turbo-ext.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libjpeg-turbo-ext) |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-libnvimgcodec--libopencv--ext-green.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libopencv-ext) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libnvimgcodec-libopencv-ext.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libopencv-ext) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libnvimgcodec-libopencv-ext.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libopencv-ext) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libnvimgcodec-libopencv-ext.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libopencv-ext) |
@@ -141,41 +153,41 @@ conda config --add channels conda-forge
 conda config --set channel_priority strict
 ```
 
-Once the `conda-forge` channel has been enabled, `libnvimgcodec-dev, libnvimgcodec-libjpeg-turbo-ext, libnvimgcodec-libopencv-ext, libnvimgcodec-libtiff-ext, libnvimgcodec0` can be installed with `conda`:
+Once the `conda-forge` channel has been enabled, `libnvimgcodec, libnvimgcodec-dev, libnvimgcodec-libjpeg-turbo-ext, libnvimgcodec-libopencv-ext, libnvimgcodec-libtiff-ext, libnvimgcodec0` can be installed with `conda`:
 
 ```
-conda install libnvimgcodec-dev libnvimgcodec-libjpeg-turbo-ext libnvimgcodec-libopencv-ext libnvimgcodec-libtiff-ext libnvimgcodec0
-```
-
-or with `mamba`:
-
-```
-mamba install libnvimgcodec-dev libnvimgcodec-libjpeg-turbo-ext libnvimgcodec-libopencv-ext libnvimgcodec-libtiff-ext libnvimgcodec0
-```
-
-It is possible to list all of the versions of `libnvimgcodec-dev` available on your platform with `conda`:
-
-```
-conda search libnvimgcodec-dev --channel conda-forge
+conda install libnvimgcodec libnvimgcodec-dev libnvimgcodec-libjpeg-turbo-ext libnvimgcodec-libopencv-ext libnvimgcodec-libtiff-ext libnvimgcodec0
 ```
 
 or with `mamba`:
 
 ```
-mamba search libnvimgcodec-dev --channel conda-forge
+mamba install libnvimgcodec libnvimgcodec-dev libnvimgcodec-libjpeg-turbo-ext libnvimgcodec-libopencv-ext libnvimgcodec-libtiff-ext libnvimgcodec0
+```
+
+It is possible to list all of the versions of `libnvimgcodec` available on your platform with `conda`:
+
+```
+conda search libnvimgcodec --channel conda-forge
+```
+
+or with `mamba`:
+
+```
+mamba search libnvimgcodec --channel conda-forge
 ```
 
 Alternatively, `mamba repoquery` may provide more information:
 
 ```
 # Search all versions available on your platform:
-mamba repoquery search libnvimgcodec-dev --channel conda-forge
+mamba repoquery search libnvimgcodec --channel conda-forge
 
-# List packages depending on `libnvimgcodec-dev`:
-mamba repoquery whoneeds libnvimgcodec-dev --channel conda-forge
+# List packages depending on `libnvimgcodec`:
+mamba repoquery whoneeds libnvimgcodec --channel conda-forge
 
-# List dependencies of `libnvimgcodec-dev`:
-mamba repoquery depends libnvimgcodec-dev --channel conda-forge
+# List dependencies of `libnvimgcodec`:
+mamba repoquery depends libnvimgcodec --channel conda-forge
 ```
 
 
