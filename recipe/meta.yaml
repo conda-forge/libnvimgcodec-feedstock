@@ -39,9 +39,7 @@ requirements:
     - {{ compiler('cuda') }}
     - {{ compiler('cxx') }}
     - {{ stdlib('c') }}
-  # Must use 3.18 because of changes in find_package(TIFF) - @carterbox Jan 2025
-    - cmake 3.18.*  # [win]
-    - cmake  # [not win]
+    - cmake 3.*
     - ninja
     - pkg-config
   host:
