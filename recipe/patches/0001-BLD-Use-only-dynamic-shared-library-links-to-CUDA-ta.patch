@@ -1,7 +1,7 @@
 From 0eb9e517a12e8358228081436403b6e66a2d3fa0 Mon Sep 17 00:00:00 2001
 From: Daniel Ching <dching@nvidia.com>
 Date: Tue, 4 Feb 2025 13:06:52 -0600
-Subject: [PATCH 1/2] BLD: Use only dynamic (shared library) links to CUDA
+Subject: [PATCH 1/4] BLD: Use only dynamic (shared library) links to CUDA
  targets
 
 ---
@@ -9,10 +9,10 @@ Subject: [PATCH 1/2] BLD: Use only dynamic (shared library) links to CUDA
  extensions/nvjpeg/CMakeLists.txt   | 6 +++---
  extensions/nvjpeg2k/CMakeLists.txt | 2 +-
  extensions/nvtiff/CMakeLists.txt   | 4 ++--
- python/CMakeLists.txt              | 2 +-
+ python/CMakeLists.txt              | 8 ++++----
  src/CMakeLists.txt                 | 2 +-
  test/CMakeLists.txt                | 4 ++--
- 7 files changed, 12 insertions(+), 12 deletions(-)
+ 7 files changed, 15 insertions(+), 15 deletions(-)
 
 diff --git a/cmake/Dependencies.cmake b/cmake/Dependencies.cmake
 index cf847cb..951fc69 100644
@@ -106,6 +106,26 @@ index 7f5925f..f037ae5 100644
      SRC ${PY_NVIMGCODEC_SRCS})
  
  # Setup wheel depependencies
+@@ -89,8 +89,8 @@ else()
+     set(EXTRAS_REQUIRE "{
+         'nvjpeg': [ 'nvidia-nvjpeg-cu${CUDA_VERSION_MAJOR}'],
+         'nvjpeg2k': [ 'nvidia-nvjpeg2k-cu${CUDA_VERSION_MAJOR}'],
+-        'nvtiff': [ 
+-            'nvidia-nvtiff-cu${CUDA_VERSION_MAJOR}', 
++        'nvtiff': [
++            'nvidia-nvtiff-cu${CUDA_VERSION_MAJOR}',
+             'nvidia-nvcomp-cu${CUDA_VERSION_MAJOR}'
+         ],
+         'all': [
+@@ -161,7 +161,7 @@ if(NVIMGCODEC_COPY_LIBS_TO_PYTHON_DIR)
+         add_custom_command(
+             TARGET copy_libs_to_python_dir
+             COMMAND copy "${PROJECT_BINARY_DIR}\\src\\${CMAKE_BUILD_TYPE}\\nvimgcodec_0.dll" "${CMAKE_CURRENT_BINARY_DIR}\\nvidia\\nvimgcodec" &&
+-            copy "${PROJECT_BINARY_DIR}\\python\\${CMAKE_BUILD_TYPE}\\*.pyd" "${CMAKE_CURRENT_BINARY_DIR}\\nvidia\\nvimgcodec" && 
++            copy "${PROJECT_BINARY_DIR}\\python\\${CMAKE_BUILD_TYPE}\\*.pyd" "${CMAKE_CURRENT_BINARY_DIR}\\nvidia\\nvimgcodec" &&
+             for /r  "${PROJECT_BINARY_DIR}\\extensions" %%f in \(*.dll\) do xcopy "%%f" "${CMAKE_CURRENT_BINARY_DIR}\\nvidia\\nvimgcodec\\extensions\\" /Y &&
+             xcopy "${PROJECT_SOURCE_DIR}\\include\\*.*" "${CMAKE_CURRENT_BINARY_DIR}\\nvidia\\nvimgcodec\\include\\" /S /Y )
+     endif()
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
 index 9558804..5f7c3ec 100644
 --- a/src/CMakeLists.txt
@@ -142,5 +162,5 @@ index c6d764a..c3046eb 100644
          gtest
          gmock
 -- 
-2.47.1
+2.49.0
 
