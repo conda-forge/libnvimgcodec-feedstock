@@ -54,6 +54,7 @@ requirements:
     - libboost-headers
     - libjpeg-turbo
     - libopencv
+    - libopencv=*=headless*
     - libtiff
     - nvtx-c
     - zlib
@@ -278,6 +279,7 @@ outputs:
         - {{ stdlib('c') }}
       host:
         - libopencv
+        - libopencv=*=headless*
     test:
       commands:
         - test -f ${PREFIX}/lib/extensions/libopencv_ext.so.{{ version }}  # [linux]
