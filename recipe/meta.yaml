@@ -132,6 +132,8 @@ outputs:
       run:
         # FIXME: max_pin=None when library is stable
         - {{ pin_subpackage('libnvimgcodec' ~ somajor, max_pin="x.x.x") }}
+    test:
+      commands: []
     about:
       summary: The nvImageCodec runtime library.
       description: >-
