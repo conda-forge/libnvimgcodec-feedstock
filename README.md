@@ -16,50 +16,6 @@ Summary: The C API development package for nvImageCodec.
 nvImageCodec is an open-source library of accelerated codecs with unified interface. This package is the C-API only. See nvimgcodec for the Python-API.
 
 
-About libnvimgcodec
--------------------
-
-
-
-Package license: Apache-2.0
-
-Summary: The nvImageCodec runtime library.
-
-This is a runtime package only. Developers should install libnvimgcodec-dev to build with nvImageCodec.
-
-About libnvimgcodec-libjpeg-turbo-ext
--------------------------------------
-
-
-
-Package license: Apache-2.0
-
-Summary: Install this package to enable libjpeg extensions for nvImageCodec
-
-This is a runtime package only. Developers should install libnvimgcodec-dev to build with nvImageCodec.
-
-About libnvimgcodec-libopencv-ext
----------------------------------
-
-
-
-Package license: Apache-2.0
-
-Summary: Install this package to enable opencv extensions for nvImageCodec
-
-This is a runtime package only. Developers should install libnvimgcodec-dev to build with nvImageCodec.
-
-About libnvimgcodec-libtiff-ext
--------------------------------
-
-
-
-Package license: Apache-2.0
-
-Summary: Install this package to enable libtiff extensions for nvImageCodec
-
-This is a runtime package only. Developers should install libnvimgcodec-dev to build with nvImageCodec.
-
 About libnvimgcodec0
 --------------------
 
@@ -89,41 +45,6 @@ Current build status
         <table>
           <thead><tr><th>Variant</th><th>Status</th></tr></thead>
           <tbody><tr>
-              <td>linux_64_c_compiler_version11cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=25430&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/libnvimgcodec-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_c_compiler_version11cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_c_compiler_version13cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=25430&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/libnvimgcodec-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_c_compiler_version13cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64_c_compiler_version11cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=25430&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/libnvimgcodec-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_c_compiler_version11cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64_c_compiler_version13cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=25430&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/libnvimgcodec-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_c_compiler_version13cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>win_64_cuda_compilercuda-nvcccuda_compiler_version12.6</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=25430&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/libnvimgcodec-feedstock?branchName=main&jobName=win&configuration=win%20win_64_cuda_compilercuda-nvcccuda_compiler_version12.6" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
               <td>win_64_cuda_compilernvcccuda_compiler_version11.8</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=25430&branchName=main">
@@ -143,11 +64,7 @@ Current release info
 
 | Name | Downloads | Version | Platforms |
 | --- | --- | --- | --- |
-| [![Conda Recipe](https://img.shields.io/badge/recipe-libnvimgcodec-green.svg)](https://anaconda.org/conda-forge/libnvimgcodec) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libnvimgcodec.svg)](https://anaconda.org/conda-forge/libnvimgcodec) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libnvimgcodec.svg)](https://anaconda.org/conda-forge/libnvimgcodec) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libnvimgcodec.svg)](https://anaconda.org/conda-forge/libnvimgcodec) |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-libnvimgcodec--dev-green.svg)](https://anaconda.org/conda-forge/libnvimgcodec-dev) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libnvimgcodec-dev.svg)](https://anaconda.org/conda-forge/libnvimgcodec-dev) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libnvimgcodec-dev.svg)](https://anaconda.org/conda-forge/libnvimgcodec-dev) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libnvimgcodec-dev.svg)](https://anaconda.org/conda-forge/libnvimgcodec-dev) |
-| [![Conda Recipe](https://img.shields.io/badge/recipe-libnvimgcodec--libjpeg--turbo--ext-green.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libjpeg-turbo-ext) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libnvimgcodec-libjpeg-turbo-ext.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libjpeg-turbo-ext) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libnvimgcodec-libjpeg-turbo-ext.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libjpeg-turbo-ext) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libnvimgcodec-libjpeg-turbo-ext.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libjpeg-turbo-ext) |
-| [![Conda Recipe](https://img.shields.io/badge/recipe-libnvimgcodec--libopencv--ext-green.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libopencv-ext) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libnvimgcodec-libopencv-ext.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libopencv-ext) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libnvimgcodec-libopencv-ext.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libopencv-ext) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libnvimgcodec-libopencv-ext.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libopencv-ext) |
-| [![Conda Recipe](https://img.shields.io/badge/recipe-libnvimgcodec--libtiff--ext-green.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libtiff-ext) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libnvimgcodec-libtiff-ext.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libtiff-ext) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libnvimgcodec-libtiff-ext.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libtiff-ext) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libnvimgcodec-libtiff-ext.svg)](https://anaconda.org/conda-forge/libnvimgcodec-libtiff-ext) |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-libnvimgcodec0-green.svg)](https://anaconda.org/conda-forge/libnvimgcodec0) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libnvimgcodec0.svg)](https://anaconda.org/conda-forge/libnvimgcodec0) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libnvimgcodec0.svg)](https://anaconda.org/conda-forge/libnvimgcodec0) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libnvimgcodec0.svg)](https://anaconda.org/conda-forge/libnvimgcodec0) |
 
 Installing libnvimgcodec
@@ -160,41 +77,41 @@ conda config --add channels conda-forge
 conda config --set channel_priority strict
 ```
 
-Once the `conda-forge` channel has been enabled, `libnvimgcodec, libnvimgcodec-dev, libnvimgcodec-libjpeg-turbo-ext, libnvimgcodec-libopencv-ext, libnvimgcodec-libtiff-ext, libnvimgcodec0` can be installed with `conda`:
+Once the `conda-forge` channel has been enabled, `libnvimgcodec-dev, libnvimgcodec0` can be installed with `conda`:
 
 ```
-conda install libnvimgcodec libnvimgcodec-dev libnvimgcodec-libjpeg-turbo-ext libnvimgcodec-libopencv-ext libnvimgcodec-libtiff-ext libnvimgcodec0
-```
-
-or with `mamba`:
-
-```
-mamba install libnvimgcodec libnvimgcodec-dev libnvimgcodec-libjpeg-turbo-ext libnvimgcodec-libopencv-ext libnvimgcodec-libtiff-ext libnvimgcodec0
-```
-
-It is possible to list all of the versions of `libnvimgcodec` available on your platform with `conda`:
-
-```
-conda search libnvimgcodec --channel conda-forge
+conda install libnvimgcodec-dev libnvimgcodec0
 ```
 
 or with `mamba`:
 
 ```
-mamba search libnvimgcodec --channel conda-forge
+mamba install libnvimgcodec-dev libnvimgcodec0
+```
+
+It is possible to list all of the versions of `libnvimgcodec-dev` available on your platform with `conda`:
+
+```
+conda search libnvimgcodec-dev --channel conda-forge
+```
+
+or with `mamba`:
+
+```
+mamba search libnvimgcodec-dev --channel conda-forge
 ```
 
 Alternatively, `mamba repoquery` may provide more information:
 
 ```
 # Search all versions available on your platform:
-mamba repoquery search libnvimgcodec --channel conda-forge
+mamba repoquery search libnvimgcodec-dev --channel conda-forge
 
-# List packages depending on `libnvimgcodec`:
-mamba repoquery whoneeds libnvimgcodec --channel conda-forge
+# List packages depending on `libnvimgcodec-dev`:
+mamba repoquery whoneeds libnvimgcodec-dev --channel conda-forge
 
-# List dependencies of `libnvimgcodec`:
-mamba repoquery depends libnvimgcodec --channel conda-forge
+# List dependencies of `libnvimgcodec-dev`:
+mamba repoquery depends libnvimgcodec-dev --channel conda-forge
 ```
 
 
