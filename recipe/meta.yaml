@@ -205,10 +205,10 @@ outputs:
         - test -f ${PREFIX}/lib/extensions/libnvtiff_ext.so.{{ version }}  # [linux]
         - if not exist %LIBRARY_BIN%\\nvimgcodec_{{ somajor }}.dll exit 1  # [win]
         - if not exist %LIBRARY_PREFIX%\\extensions\\nvbmp_ext_{{ somajor }}.dll exit 1  # [win]
-        - if not exist %LIBRARY_PREFIX%\\extensions\\nvjpeg_ext_{{ somajor }}.dll exit 1  # [win]
+        - if not exist %LIBRARY_PREFIX%\\extensions\\nvjpeg_ext_{{ somajor }}.dll exit 1  # [win and not (cuda_compiler_version or "").startswith("11")]
         - if not exist %LIBRARY_PREFIX%\\extensions\\nvjpeg2k_ext_{{ somajor }}.dll exit 1  # [win]
         - if not exist %LIBRARY_PREFIX%\\extensions\\nvpnm_ext_{{ somajor }}.dll exit 1  # [win]
-        - if not exist %LIBRARY_PREFIX%\\extensions\\nvtiff_ext_{{ somajor }}.dll exit 1  # [win]
+        - if not exist %LIBRARY_PREFIX%\\extensions\\nvtiff_ext_{{ somajor }}.dll exit 1  # [win and not (cuda_compiler_version or "").startswith("11")]
     about:
       summary: The nvImageCodec runtime library.
       description: >-
@@ -281,8 +281,10 @@ outputs:
         - {{ compiler('cxx') }}
         - {{ stdlib('c') }}
       host:
-        - libopencv
-        - libopencv * headless*
+        - libopencv  # [not (cuda_compiler_version or "").startswith("11")]
+        - libopencv * headless*  # [not (cuda_compiler_version or "").startswith("11")]
+        # opencv >=4.11 built with vs2022; CTK 11 only support vs2019
+        - libopencv 4.10.*  # [(cuda_compiler_version or "").startswith("11")]
     test:
       commands:
         - test -f ${PREFIX}/lib/extensions/libopencv_ext.so.{{ version }}  # [linux]
