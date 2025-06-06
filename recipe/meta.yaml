@@ -30,8 +30,8 @@ source:
 build:
   number: 3
   skip: true  # [((cuda_compiler_version or "None") == "None")]
-  skip: true  # [cuda_compiler_version not in ("11.8",)]
-  skip: true  # [not win]
+  # skip: true  # [((cuda_compiler_version or "") == "11.8") and ((libopencv or "") == "4.11.0") ]
+  # skip: true  # [((cuda_compiler_version or "") == "12.6") and ((libopencv or "") == "4.10") ]
 requirements:
   build:
     - {{ compiler('c') }}
@@ -52,10 +52,8 @@ requirements:
     - libnvtiff-dev
     - libboost-headers
     - libjpeg-turbo
-    - libopencv  # [not (cuda_compiler_version or "").startswith("11")]
+    - libopencv
     - libopencv * headless*  # [not (cuda_compiler_version or "").startswith("11")]
-    # opencv >=4.11 built with vs2022; CTK 11 only support vs2019
-    - libopencv 4.10.*  # [(cuda_compiler_version or "").startswith("11")]
     - libtiff
     - nvtx-c
     - zlib
@@ -281,10 +279,8 @@ outputs:
         - {{ compiler('cxx') }}
         - {{ stdlib('c') }}
       host:
-        - libopencv  # [not (cuda_compiler_version or "").startswith("11")]
+        - libopencv
         - libopencv * headless*  # [not (cuda_compiler_version or "").startswith("11")]
-        # opencv >=4.11 built with vs2022; CTK 11 only support vs2019
-        - libopencv 4.10.*  # [(cuda_compiler_version or "").startswith("11")]
     test:
       commands:
         - test -f ${PREFIX}/lib/extensions/libopencv_ext.so.{{ version }}  # [linux]
