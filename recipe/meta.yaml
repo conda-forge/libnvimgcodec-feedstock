@@ -100,6 +100,7 @@ outputs:
     test:
       files:
         - test
+      script: run_test.bat  # [win]
       requires:  # [build_platform == target_platform]
         - {{ compiler('c') }}  # [build_platform == target_platform]
         - {{ compiler('cxx') }}  # [build_platform == target_platform]
