@@ -28,11 +28,10 @@ source:
     - patches/0003-BLD-Use-FOO_FOUND-variables-with-find_package-FOO.patch
     - patches/0004-BLD-Make-find_package-OpenCV-verbose-and-required.patch
 build:
-  number: 3
-  # Skip Windows CTK 11 because old cmake cannot find nvcc
-  skip: true  # [((cuda_compiler_version or "None") == "None") or (win and (cuda_compiler_version or "").startswith("11")) ]
-  # Debug skips below
-  # skip: true  # [py != 312]
+  number: 4
+  skip: true  # [((cuda_compiler_version or "None") == "None")]
+  # skip: true  # [((cuda_compiler_version or "") == "11.8") and ((libopencv or "") == "4.11.0") ]
+  # skip: true  # [((cuda_compiler_version or "") == "12.6") and ((libopencv or "") == "4.10") ]
 requirements:
   build:
     - {{ compiler('c') }}
@@ -54,7 +53,7 @@ requirements:
     - libboost-headers
     - libjpeg-turbo
     - libopencv
-    - libopencv * headless*
+    - libopencv * headless*  # [not (cuda_compiler_version or "").startswith("11")]
     - libtiff
     - nvtx-c
     - zlib
@@ -101,6 +100,7 @@ outputs:
     test:
       files:
         - test
+      script: run_test.bat  # [win]
       requires:  # [build_platform == target_platform]
         - {{ compiler('c') }}  # [build_platform == target_platform]
         - {{ compiler('cxx') }}  # [build_platform == target_platform]
@@ -119,8 +119,8 @@ outputs:
         - if not exist %LIBRARY_LIB%\\nvimgcodec.lib exit 1  # [win]
         - test -f ${PREFIX}/etc/ld.so.conf.d/nvimgcodec.conf  # [unix]
         - test -f ${PREFIX}/lib/cmake/nvimgcodec/nvimgcodecConfig.cmake  # [unix]
-        - cmake ${CMAKE_ARGS} -GNinja test  # [build_platform == target_platform]
-        - cmake --build .  # [build_platform == target_platform]
+        - cmake ${CMAKE_ARGS} -GNinja test  # [unix and build_platform == target_platform]
+        - cmake --build .  # [unix and build_platform == target_platform]
         # - test ! -f ${PREFIX}/lib/libnvimgcodec_static.a  # [unix]
 
   - name: libnvimgcodec
@@ -204,10 +204,10 @@ outputs:
         - test -f ${PREFIX}/lib/extensions/libnvtiff_ext.so.{{ version }}  # [linux]
         - if not exist %LIBRARY_BIN%\\nvimgcodec_{{ somajor }}.dll exit 1  # [win]
         - if not exist %LIBRARY_PREFIX%\\extensions\\nvbmp_ext_{{ somajor }}.dll exit 1  # [win]
-        - if not exist %LIBRARY_PREFIX%\\extensions\\nvjpeg_ext_{{ somajor }}.dll exit 1  # [win]
+        - if not exist %LIBRARY_PREFIX%\\extensions\\nvjpeg_ext_{{ somajor }}.dll exit 1  # [win and not (cuda_compiler_version or "").startswith("11")]
         - if not exist %LIBRARY_PREFIX%\\extensions\\nvjpeg2k_ext_{{ somajor }}.dll exit 1  # [win]
         - if not exist %LIBRARY_PREFIX%\\extensions\\nvpnm_ext_{{ somajor }}.dll exit 1  # [win]
-        - if not exist %LIBRARY_PREFIX%\\extensions\\nvtiff_ext_{{ somajor }}.dll exit 1  # [win]
+        - if not exist %LIBRARY_PREFIX%\\extensions\\nvtiff_ext_{{ somajor }}.dll exit 1  # [win and not (cuda_compiler_version or "").startswith("11")]
     about:
       summary: The nvImageCodec runtime library.
       description: >-
@@ -281,7 +281,7 @@ outputs:
         - {{ stdlib('c') }}
       host:
         - libopencv
-        - libopencv * headless*
+        - libopencv * headless*  # [not (cuda_compiler_version or "").startswith("11")]
     test:
       commands:
         - test -f ${PREFIX}/lib/extensions/libopencv_ext.so.{{ version }}  # [linux]

@@ -10,8 +10,15 @@ cd build
 
 if errorlevel 1 exit 1
 
-if defined CUDA_NVCC_EXECUTABLE (
-    set CUDACXX=%CUDA_NVCC_EXECUTABLE%
+if "%cuda_compiler_version%"=="11.8" (
+    set NVIMG_CTK_ARGS= ^
+        "-DCUDAToolkit_ROOT=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8" ^
+        "-DCMAKE_CUDA_COMPILER=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\bin\nvcc.exe" ^
+        "-DNVJPEG_INCLUDE=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include"
+    set CUDAARCHS=35;50;60;70;80;90
+    set NVIMG_USE_NVJPEG=OFF
+) else (
+    set NVIMG_USE_NVJPEG=ON
 )
 
 set NVIMG_BUILD_ARGS= ^
@@ -31,10 +38,10 @@ set NVIMG_EXT_ARGS= ^
     -DBUILD_LIBJPEG_TURBO_EXT:BOOL=ON ^
     -DBUILD_LIBTIFF_EXT:BOOL=ON ^
     -DBUILD_NVBMP_EXT:BOOL=ON ^
-    -DBUILD_NVJPEG_EXT:BOOL=ON ^
+    -DBUILD_NVJPEG_EXT:BOOL=%NVIMG_USE_NVJPEG% ^
     -DBUILD_NVJPEG2K_EXT:BOOL=ON ^
     -DBUILD_NVPNM_EXT:BOOL=ON ^
-    -DBUILD_NVTIFF_EXT:BOOL=ON ^
+    -DBUILD_NVTIFF_EXT:BOOL=%NVIMG_USE_NVJPEG% ^
     -DBUILD_OPENCV_EXT:BOOL=ON
 
 set NVIMG_PYTHON_ARGS= ^
@@ -48,17 +55,17 @@ set NVIMG_PYTHON_ARGS= ^
 
 cmake %CMAKE_ARGS% -GNinja -DCMAKE_INSTALL_PREFIX="%LIBRARY_PREFIX%" ^
     %NVIMG_BUILD_ARGS% %NVIMG_LIBRARY_ARGS% %NVIMG_EXT_ARGS% ^
-    %NVIMG_PYTHON_ARGS% %SRC_DIR%
+    %NVIMG_PYTHON_ARGS% %NVIMG_CTK_ARGS% %SRC_DIR%
 
 if errorlevel 1 exit 1
 
-cmake --build .
+cmake --build . -v
 
 if errorlevel 1 exit 1
 
 cmake --install .
 
-del %LIBRARY_PREFIX%/LICENSE.txt
-del %LIBRARY_PREFIX%/Acknowledgements.txt
+del %LIBRARY_PREFIX%\LICENSE.txt
+del %LIBRARY_PREFIX%\Acknowledgements.txt
 
 endlocal

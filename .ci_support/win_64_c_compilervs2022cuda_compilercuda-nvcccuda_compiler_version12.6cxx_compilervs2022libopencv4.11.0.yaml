@@ -23,6 +23,9 @@ libtiff:
 target_platform:
 - win-64
 zip_keys:
+- - c_compiler
+  - cxx_compiler
+  - libopencv
 - - cuda_compiler
   - cuda_compiler_version
 zlib:
