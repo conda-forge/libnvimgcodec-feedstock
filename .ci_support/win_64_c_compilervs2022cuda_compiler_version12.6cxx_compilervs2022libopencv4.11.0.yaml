@@ -26,8 +26,6 @@ zip_keys:
 - - c_compiler
   - cxx_compiler
   - libopencv
-- - cuda_compiler
-  - cuda_compiler_version
 zlib:
 - '1'
 zstd:
