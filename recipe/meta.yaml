@@ -28,7 +28,7 @@ source:
     - patches/0003-BLD-Use-FOO_FOUND-variables-with-find_package-FOO.patch
     - patches/0004-BLD-Make-find_package-OpenCV-verbose-and-required.patch
 build:
-  number: 4
+  number: 5
   skip: true  # [((cuda_compiler_version or "None") == "None")]
   # skip: true  # [((cuda_compiler_version or "") == "11.8") and ((libopencv or "") == "4.11.0") ]
   # skip: true  # [((cuda_compiler_version or "") == "12.6") and ((libopencv or "") == "4.10") ]
