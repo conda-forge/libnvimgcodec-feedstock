@@ -8,11 +8,11 @@ jobs:
     vmImage: windows-2022
   strategy:
     matrix:
-      win_64_c_compilervs2019cuda_compilernvcccuda_compiler_version11.8cxx_compilervs2019libopencv4.10:
-        CONFIG: win_64_c_compilervs2019cuda_compilernvcccuda_compiler_version11.8cxx_compilervs2019libopencv4.10
+      win_64_c_compilervs2019cuda_compiler_version12.6cxx_compilervs2019libopencv4.10:
+        CONFIG: win_64_c_compilervs2019cuda_compiler_version12.6cxx_compilervs2019libopencv4.10
         UPLOAD_PACKAGES: 'True'
-      win_64_c_compilervs2022cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compilervs2022libopencv4.11.0:
-        CONFIG: win_64_c_compilervs2022cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compilervs2022libopencv4.11.0
+      win_64_c_compilervs2022cuda_compiler_version12.6cxx_compilervs2022libopencv4.11.0:
+        CONFIG: win_64_c_compilervs2022cuda_compiler_version12.6cxx_compilervs2022libopencv4.11.0
         UPLOAD_PACKAGES: 'True'
   timeoutInMinutes: 360
   variables:
