@@ -1,5 +1,5 @@
 c_compiler:
-- vs2022
+- vs2019
 c_stdlib:
 - vs
 channel_sources:
@@ -9,15 +9,15 @@ channel_targets:
 cuda_compiler:
 - cuda-nvcc
 cuda_compiler_version:
-- '12.6'
+- '12.9'
 cxx_compiler:
-- vs2022
+- vs2019
 libboost_headers:
 - '1.88'
 libjpeg_turbo:
 - '3'
 libopencv:
-- 4.11.0
+- '4.10'
 libtiff:
 - '4.7'
 target_platform:
