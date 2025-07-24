@@ -103,17 +103,10 @@ Current build status
                 </a>
               </td>
             </tr><tr>
-              <td>win_64_c_compilervs2019cuda_compiler_version12.9cxx_compilervs2019libopencv4.10</td>
+              <td>win_64_cuda_compiler_version12.9</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=25430&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/libnvimgcodec-feedstock?branchName=main&jobName=win&configuration=win%20win_64_c_compilervs2019cuda_compiler_version12.9cxx_compilervs2019libopencv4.10" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>win_64_c_compilervs2022cuda_compiler_version12.9cxx_compilervs2022libopencv4.11.0</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=25430&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/libnvimgcodec-feedstock?branchName=main&jobName=win&configuration=win%20win_64_c_compilervs2022cuda_compiler_version12.9cxx_compilervs2022libopencv4.11.0" alt="variant">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/libnvimgcodec-feedstock?branchName=main&jobName=win&configuration=win%20win_64_cuda_compiler_version12.9" alt="variant">
                 </a>
               </td>
             </tr>
