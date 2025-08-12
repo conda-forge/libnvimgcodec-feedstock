@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-{% set version = '0.5.0' %}
+{% set version = "0.6.0" %}
 {% set somajor = version.split('.')[0] %}
 {% set cuda_major = environ.get("cuda_compiler_version", "11.8").split(".")[0]|int %}
 
@@ -21,14 +21,14 @@ package:
 
 source:
   url: https://github.com/NVIDIA/nvImageCodec/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: bca65e817db45edcc86b57cc980d7ad122b3eef167b5cfc4a0e20e8e24c2226f
+  sha256: b79e2fe1693656e81078a95c17b512be96e58e8a2b93e4b8bc85112c4da85e7e
   patches:
     - patches/0001-BLD-Use-only-dynamic-shared-library-links-to-CUDA-ta.patch
     - patches/0002-BLD-Move-CMake-config-install-directory.patch
     - patches/0003-BLD-Use-FOO_FOUND-variables-with-find_package-FOO.patch
     - patches/0004-BLD-Make-find_package-OpenCV-verbose-and-required.patch
 build:
-  number: 6
+  number: 0
   skip: true  # [((cuda_compiler_version or "None") == "None")]
   # skip: true  # [((cuda_compiler_version or "") == "11.8") and ((libopencv or "") == "4.11.0") ]
   # skip: true  # [((cuda_compiler_version or "") == "12.6") and ((libopencv or "") == "4.10") ]
@@ -101,7 +101,7 @@ outputs:
       files:
         - test
       script: run_test.bat  # [win]
-      requires:  # [build_platform == target_platform]
+      requires:   # [build_platform == target_platform]
         - {{ compiler('c') }}  # [build_platform == target_platform]
         - {{ compiler('cxx') }}  # [build_platform == target_platform]
         - {{ compiler('cuda') }}  # [build_platform == target_platform]
@@ -302,8 +302,7 @@ about:
   home: https://github.com/NVIDIA/nvImageCodec
   summary: The C API development package for nvImageCodec.
   description: >
-    nvImageCodec is an open-source library of accelerated codecs with unified interface.
-    This package is the C-API only. See nvimgcodec for the Python-API.
+    nvImageCodec is an open-source library of accelerated codecs with unified interface. This package is the C-API only. See nvimgcodec for the Python-API.
   license: Apache-2.0
   license_family: APACHE
   license_file:
