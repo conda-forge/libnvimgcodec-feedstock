@@ -13,7 +13,6 @@
 # limitations under the License.
 {% set version = "0.6.0" %}
 {% set somajor = version.split('.')[0] %}
-{% set cuda_major = environ.get("cuda_compiler_version", "11.8").split(".")[0]|int %}
 
 package:
   name: libnvimgcodec-split
@@ -29,7 +28,6 @@ source:
 build:
   number: 0
   skip: true  # [((cuda_compiler_version or "None") == "None")]
-  # skip: true  # [((cuda_compiler_version or "") == "11.8") and ((libopencv or "") == "4.11.0") ]
   # skip: true  # [((cuda_compiler_version or "") == "12.6") and ((libopencv or "") == "4.10") ]
 requirements:
   build:
@@ -42,17 +40,15 @@ requirements:
     - pkg-config
   host:
     - cuda-version {{ cuda_compiler_version }}
-    {% if cuda_major == 12 %}
     - cuda-cudart-dev
     - cuda-driver-dev  # [linux]
     - libnvjpeg-dev
-    {% endif %}
     - libnvjpeg2k-dev
     - libnvtiff-dev
     - libboost-headers
     - libjpeg-turbo
     - libopencv
-    - libopencv * headless*  # [not (cuda_compiler_version or "").startswith("11")]
+    - libopencv * headless*
     - libtiff
     - nvtx-c
     - zlib
@@ -107,9 +103,7 @@ outputs:
         - {{ stdlib('c') }}  # [build_platform == target_platform]
         - cmake   # [build_platform == target_platform]
         - ninja  # [build_platform == target_platform]
-       {% if cuda_major == 12 %}
         - cuda-cudart-dev  # [build_platform == target_platform]
-       {% endif %}
       commands:
         - test -f ${PREFIX}/include/nvimgcodec.h  # [linux]
         - if not exist %LIBRARY_INC%\\nvimgcodec.h exit 1  # [win]
@@ -175,19 +169,15 @@ outputs:
         - {{ stdlib('c') }}
       host:
         - cuda-version {{ cuda_compiler_version }}
-      {% if cuda_major == 12 %}
         - cuda-cudart-dev
         - cuda-driver-dev  # [linux]
         - libnvjpeg-dev
-      {% endif %}
         - libnvjpeg2k-dev
         - libnvtiff-dev
       run:
         - {{ pin_compatible('cuda-version', min_pin='x', max_pin='x') }}
-      {% if cuda_major == 12 %}
         - cuda-cudart
         - libnvjpeg
-      {% endif %}
       run_constrained:
         - {{ pin_subpackage('libnvimgcodec-libtiff-ext', exact=True) }}
         - {{ pin_subpackage('libnvimgcodec-libopencv-ext', exact=True) }}
@@ -203,10 +193,10 @@ outputs:
         - test -f ${PREFIX}/lib/extensions/libnvtiff_ext.so.{{ version }}  # [linux]
         - if not exist %LIBRARY_BIN%\\nvimgcodec_{{ somajor }}.dll exit 1  # [win]
         - if not exist %LIBRARY_PREFIX%\\extensions\\nvbmp_ext_{{ somajor }}.dll exit 1  # [win]
-        - if not exist %LIBRARY_PREFIX%\\extensions\\nvjpeg_ext_{{ somajor }}.dll exit 1  # [win and not (cuda_compiler_version or "").startswith("11")]
+        - if not exist %LIBRARY_PREFIX%\\extensions\\nvjpeg_ext_{{ somajor }}.dll exit 1  # [win]
         - if not exist %LIBRARY_PREFIX%\\extensions\\nvjpeg2k_ext_{{ somajor }}.dll exit 1  # [win]
         - if not exist %LIBRARY_PREFIX%\\extensions\\nvpnm_ext_{{ somajor }}.dll exit 1  # [win]
-        - if not exist %LIBRARY_PREFIX%\\extensions\\nvtiff_ext_{{ somajor }}.dll exit 1  # [win and not (cuda_compiler_version or "").startswith("11")]
+        - if not exist %LIBRARY_PREFIX%\\extensions\\nvtiff_ext_{{ somajor }}.dll exit 1  # [win]
     about:
       summary: The nvImageCodec runtime library.
       description: >-
@@ -280,7 +270,7 @@ outputs:
         - {{ stdlib('c') }}
       host:
         - libopencv
-        - libopencv * headless*  # [not (cuda_compiler_version or "").startswith("11")]
+        - libopencv * headless*
     test:
       commands:
         - test -f ${PREFIX}/lib/extensions/libopencv_ext.so.{{ version }}  # [linux]

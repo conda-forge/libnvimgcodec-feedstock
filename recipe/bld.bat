@@ -10,17 +10,6 @@ cd build
 
 if errorlevel 1 exit 1
 
-if "%cuda_compiler_version%"=="11.8" (
-    set NVIMG_CTK_ARGS= ^
-        "-DCUDAToolkit_ROOT=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8" ^
-        "-DCMAKE_CUDA_COMPILER=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\bin\nvcc.exe" ^
-        "-DNVJPEG_INCLUDE=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include"
-    set CUDAARCHS=35;50;60;70;80;90
-    set NVIMG_USE_NVJPEG=OFF
-) else (
-    set NVIMG_USE_NVJPEG=ON
-)
-
 set NVIMG_BUILD_ARGS= ^
     -DBUILD_DOCS:BOOL=OFF ^
     -DBUILD_SAMPLES:BOOL=OFF ^
@@ -38,10 +27,10 @@ set NVIMG_EXT_ARGS= ^
     -DBUILD_LIBJPEG_TURBO_EXT:BOOL=ON ^
     -DBUILD_LIBTIFF_EXT:BOOL=ON ^
     -DBUILD_NVBMP_EXT:BOOL=ON ^
-    -DBUILD_NVJPEG_EXT:BOOL=%NVIMG_USE_NVJPEG% ^
+    -DBUILD_NVJPEG_EXT:BOOL=ON ^
     -DBUILD_NVJPEG2K_EXT:BOOL=ON ^
     -DBUILD_NVPNM_EXT:BOOL=ON ^
-    -DBUILD_NVTIFF_EXT:BOOL=%NVIMG_USE_NVJPEG% ^
+    -DBUILD_NVTIFF_EXT:BOOL=ON ^
     -DBUILD_OPENCV_EXT:BOOL=ON
 
 set NVIMG_PYTHON_ARGS= ^
