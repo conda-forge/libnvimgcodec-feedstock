@@ -43,7 +43,7 @@ requirements:
     - cuda-version {{ cuda_compiler_version }}
     - cuda-cudart-dev
     - cuda-driver-dev  # [linux]
-    - cuda-culibos-static  # [(cuda_compiler_version or "").startswith("13")]
+    - cuda-culibos-static  # [linux and (cuda_compiler_version or "").startswith("13")]
     - libnvjpeg-dev
     - libnvjpeg2k-dev
     - libnvtiff-dev
