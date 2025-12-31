@@ -28,7 +28,7 @@ source:
     - patches/0004-BLD-Disable-non-standard-CUDA-arch-checking.patch
     - patches/0005-BUG-Skip-runtime-nvtiff-check-when-linking-at-build-.patch
 build:
-  number: 0
+  number: 1
   skip: true  # [((cuda_compiler_version or "None") == "None")]
   # skip: true  # [((cuda_compiler_version or "") == "12.6") and ((libopencv or "") == "4.10") ]
 requirements:
@@ -37,6 +37,7 @@ requirements:
     - {{ compiler('cuda') }}
     - {{ compiler('cxx') }}
     - {{ stdlib('c') }}
+    - arm-variant * {{ arm_variant_type }}  # [linux and aarch64 and cuda_compiler_version != "None"]
     - cmake 3.*
     - ninja
     - pkg-config
@@ -92,6 +93,7 @@ outputs:
       host:
         - {{ pin_subpackage('libnvimgcodec' ~ somajor, exact=True) }}
         - cuda-version {{ cuda_compiler_version }}
+        - arm-variant * {{ arm_variant_type }}  # [linux and aarch64 and cuda_compiler_version != "None"]
       run:
         - {{ pin_subpackage('libnvimgcodec' ~ somajor, exact=True) }}
         - {{ pin_compatible('cuda-version', min_pin="x", max_pin="x") }}
@@ -125,6 +127,7 @@ outputs:
     requirements:
       host:
         - {{ pin_subpackage('libnvimgcodec' ~ somajor, max_pin=None) }}
+        - arm-variant * {{ arm_variant_type }}  # [linux and aarch64 and cuda_compiler_version != "None"]
       run:
         # FIXME: max_pin=None when library is stable
         - {{ pin_subpackage('libnvimgcodec' ~ somajor, max_pin="x.x.x") }}
@@ -170,6 +173,7 @@ outputs:
         - {{ compiler('cuda') }}
         - {{ compiler('cxx') }}
         - {{ stdlib('c') }}
+        - arm-variant * {{ arm_variant_type }}  # [linux and aarch64 and cuda_compiler_version != "None"]
       host:
         - cuda-version {{ cuda_compiler_version }}
         - cuda-cudart-dev
@@ -221,6 +225,7 @@ outputs:
         - {{ compiler('c') }}
         - {{ compiler('cxx') }}
         - {{ stdlib('c') }}
+        - arm-variant * {{ arm_variant_type }}  # [linux and aarch64 and cuda_compiler_version != "None"]
       host:
         - libjpeg-turbo
     test:
@@ -246,6 +251,7 @@ outputs:
         - {{ compiler('c') }}
         - {{ compiler('cxx') }}
         - {{ stdlib('c') }}
+        - arm-variant * {{ arm_variant_type }}  # [linux and aarch64 and cuda_compiler_version != "None"]
       host:
         - libtiff
     test:
@@ -271,6 +277,7 @@ outputs:
         - {{ compiler('c') }}
         - {{ compiler('cxx') }}
         - {{ stdlib('c') }}
+        - arm-variant * {{ arm_variant_type }}  # [linux and aarch64 and cuda_compiler_version != "None"]
       host:
         - libopencv
         - libopencv * headless*
