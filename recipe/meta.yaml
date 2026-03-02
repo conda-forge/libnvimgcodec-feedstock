@@ -20,7 +20,7 @@ package:
 
 source:
   url: https://github.com/NVIDIA/nvImageCodec/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: a5ee0c3756ec6425e0bd9c879d7c3b06a7b3e4fb4ed13491ec202e56be317d92
+  sha256: 58a87cbbfad5f59a96336574789a291493eecde53f1e9f5227044ad0e8b0428f
   patches:
     - patches/0001-BLD-Use-only-dynamic-shared-library-links-to-CUDA-ta.patch
     - patches/0002-BLD-Move-CMake-config-install-directory.patch
@@ -28,7 +28,7 @@ source:
     - patches/0004-BLD-Disable-non-standard-CUDA-arch-checking.patch
     - patches/0005-BUG-Skip-runtime-nvtiff-check-when-linking-at-build-.patch
 build:
-  number: 1
+  number: 2
   skip: true  # [((cuda_compiler_version or "None") == "None")]
   # skip: true  # [((cuda_compiler_version or "") == "12.6") and ((libopencv or "") == "4.10") ]
 requirements:
