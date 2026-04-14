@@ -16,17 +16,6 @@ Summary: The C API development package for nvImageCodec.
 nvImageCodec is an open-source library of accelerated codecs with unified interface. This package is the C-API only. See nvimgcodec for the Python-API.
 
 
-About libnvimgcodec
--------------------
-
-
-
-Package license: Apache-2.0
-
-Summary: The nvImageCodec runtime library.
-
-This is a runtime package only. Developers should install libnvimgcodec-dev to build with nvImageCodec.
-
 About libnvimgcodec-libjpeg-turbo-ext
 -------------------------------------
 
@@ -62,6 +51,17 @@ This is a runtime package only. Developers should install libnvimgcodec-dev to b
 
 About libnvimgcodec0
 --------------------
+
+
+
+Package license: Apache-2.0
+
+Summary: The nvImageCodec runtime library.
+
+This is a runtime package only. Developers should install libnvimgcodec-dev to build with nvImageCodec.
+
+About libnvimgcodec
+-------------------
 
 
 
