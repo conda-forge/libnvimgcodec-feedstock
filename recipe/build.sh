@@ -63,3 +63,11 @@ rm $PREFIX/Acknowledgements.txt
 # Can also be overridden by env variable NVIMGCODEC_EXTENSIONS_PATH or in source code
 mv -v $PREFIX/extensions $PREFIX/lib/extensions
 sed -i 's|"${_PACKAGE_ROOTDIR}/extensions"|"${_PACKAGE_ROOTDIR}/lib/extensions"|g' $PREFIX/lib/cmake/nvimgcodec/nvimgcodecConfig.cmake
+
+# nvimgcodec <= 0.8 hard-codes its default plugin search path to <so_dir>/../extensions.
+# After the mv above, extensions live in $PREFIX/lib/extensions and the runtime can't find
+# them. Install activate/deactivate scripts that point NVIMGCODEC_EXTENSIONS_PATH at the
+# right directory whenever the env is active.
+mkdir -p $PREFIX/etc/conda/activate.d $PREFIX/etc/conda/deactivate.d
+cp $RECIPE_DIR/activate-libnvimgcodec.sh   $PREFIX/etc/conda/activate.d/libnvimgcodec_activate.sh
+cp $RECIPE_DIR/deactivate-libnvimgcodec.sh $PREFIX/etc/conda/deactivate.d/libnvimgcodec_deactivate.sh
