@@ -28,7 +28,7 @@ source:
     - patches/0004-BLD-Disable-non-standard-CUDA-arch-checking.patch
     - patches/0005-BUG-Skip-runtime-nvtiff-check-when-linking-at-build-.patch
 build:
-  number: 1
+  number: 2
   skip: true  # [((cuda_compiler_version or "None") == "None")]
   # skip: true  # [((cuda_compiler_version or "") == "12.6") and ((libopencv or "") == "4.10") ]
 requirements:
@@ -89,6 +89,7 @@ outputs:
         - lib/python*  # [linux]
         - lib/libnvimgcodec.so.*  # [linux]
         - lib/extensions/*.so.*  # [linux]
+        - etc/conda/**  # [linux]
     requirements:
       host:
         - {{ pin_subpackage('libnvimgcodec' ~ somajor, exact=True) }}
@@ -148,6 +149,8 @@ outputs:
       include:
         - lib/libnvimgcodec.so.*  # [linux]
         - lib/extensions/*.so.*  # [linux]
+        - etc/conda/activate.d/libnvimgcodec_activate.sh  # [linux]
+        - etc/conda/deactivate.d/libnvimgcodec_deactivate.sh  # [linux]
         - Library/bin/nvimgcodec_{{ somajor }}.dll  # [win]
         - Library/extensions/*.dll  # [win]
       exclude:
@@ -193,6 +196,8 @@ outputs:
       commands:
         - test -f ${PREFIX}/lib/libnvimgcodec.so.{{ somajor }}  # [linux]
         - test -f ${PREFIX}/lib/libnvimgcodec.so.{{ version }}  # [linux]
+        - test -f ${PREFIX}/etc/conda/activate.d/libnvimgcodec_activate.sh  # [linux]
+        - test -f ${PREFIX}/etc/conda/deactivate.d/libnvimgcodec_deactivate.sh  # [linux]
         - test -f ${PREFIX}/lib/extensions/libnvbmp_ext.so.{{ version }}  # [linux]
         - test -f ${PREFIX}/lib/extensions/libnvjpeg_ext.so.{{ version }}  # [linux]
         - test -f ${PREFIX}/lib/extensions/libnvjpeg2k_ext.so.{{ version }}  # [linux]
