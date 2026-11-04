@@ -178,8 +178,8 @@ outputs:
         - cuda-cudart-dev
         - cuda-driver-dev  # [linux]
         - libnvjpeg-dev
-        - libnvjpeg2k-dev >=0.12
-        - libnvtiff-dev >=0.9
+        - libnvjpeg2k-dev >=0.9
+        - libnvtiff-dev >=0.8
       run:
         - {{ pin_compatible('cuda-version', min_pin='x', max_pin='x') }}
         - cuda-cudart
@@ -278,7 +278,7 @@ outputs:
         - {{ stdlib('c') }}
         - arm-variant * {{ arm_variant_type }}  # [linux and aarch64 and cuda_compiler_version != "None"]
       host:
-        - libopencv >=4.13.0,<5
+        - libopencv >=4.9,<5
         - libopencv * headless*
     test:
       commands:
