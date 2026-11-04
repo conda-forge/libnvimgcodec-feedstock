@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-{% set version = "0.9.0" %}
+{% set version = "0.10.0" %}
 {% set somajor = version.split('.')[0] %}
 
 package:
@@ -20,10 +20,10 @@ package:
 
 source:
   url: https://github.com/NVIDIA/nvImageCodec/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: cd92bec0c5293685233d88840d63383b22eaf04a12167308fe3c7c6087ff40f7
+  sha256: d36466e2366585795ecd967c9e8eb62618eb155e6030a9b0f2c3274f260a14f0
   patches:
-    - patches/0002-BLD-Make-find_package-OpenCV-verbose-and-required.patch
-    - patches/0003-BLD-Disable-non-standard-CUDA-arch-checking.patch
+    - patches/0001-BLD-Make-find_package-OpenCV-verbose-and-required.patch
+    - patches/0002-BLD-Disable-non-standard-CUDA-arch-checking.patch
 
 build:
   number: 0
@@ -45,11 +45,11 @@ requirements:
     - cuda-driver-dev  # [linux]
     - cuda-culibos-static  # [linux and (cuda_compiler_version or "").startswith("13")]
     - libnvjpeg-dev
-    - libnvjpeg2k-dev
-    - libnvtiff-dev
+    - libnvjpeg2k-dev >=0.9
+    - libnvtiff-dev >=0.8
     - libboost-headers
     - libjpeg-turbo
-    - libopencv
+    - libopencv >=4.9,<5
     - libopencv * headless*
     - libtiff
     - nvtx-c
@@ -178,8 +178,8 @@ outputs:
         - cuda-cudart-dev
         - cuda-driver-dev  # [linux]
         - libnvjpeg-dev
-        - libnvjpeg2k-dev
-        - libnvtiff-dev
+        - libnvjpeg2k-dev >=0.9
+        - libnvtiff-dev >=0.8
       run:
         - {{ pin_compatible('cuda-version', min_pin='x', max_pin='x') }}
         - cuda-cudart
@@ -278,7 +278,7 @@ outputs:
         - {{ stdlib('c') }}
         - arm-variant * {{ arm_variant_type }}  # [linux and aarch64 and cuda_compiler_version != "None"]
       host:
-        - libopencv
+        - libopencv >=4.9,<5
         - libopencv * headless*
     test:
       commands:

@@ -16,6 +16,17 @@ Summary: The C API development package for nvImageCodec.
 nvImageCodec is an open-source library of accelerated codecs with unified interface. This package is the C-API only. See nvimgcodec for the Python-API.
 
 
+About libnvimgcodec
+-------------------
+
+
+
+Package license: Apache-2.0
+
+Summary: The nvImageCodec runtime library.
+
+This is a runtime package only. Developers should install libnvimgcodec-dev to build with nvImageCodec.
+
 About libnvimgcodec-libjpeg-turbo-ext
 -------------------------------------
 
@@ -60,17 +71,6 @@ Summary: The nvImageCodec runtime library.
 
 This is a runtime package only. Developers should install libnvimgcodec-dev to build with nvImageCodec.
 
-About libnvimgcodec
--------------------
-
-
-
-Package license: Apache-2.0
-
-Summary: The nvImageCodec runtime library.
-
-This is a runtime package only. Developers should install libnvimgcodec-dev to build with nvImageCodec.
-
 Current build status
 ====================
 
@@ -81,38 +81,6 @@ Current build status
       <a href="https://github.com/conda-forge/libnvimgcodec-feedstock/actions/workflows/conda-build.yml">
         <img src="https://github.com/conda-forge/libnvimgcodec-feedstock/actions/workflows/conda-build.yml/badge.svg?event=push&branch=main">
       </a>
-    </td>
-  </tr>
-    
-  <tr>
-    <td>Azure</td>
-    <td>
-      <details>
-        <summary>
-          <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=25430&branchName=main">
-            <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/libnvimgcodec-feedstock?branchName=main">
-          </a>
-        </summary>
-        <table>
-          <thead><tr><th>Variant</th><th>Status</th></tr></thead>
-          <tbody><tr>
-              <td>win_64_cuda_compiler_version12.9</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=25430&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/libnvimgcodec-feedstock?branchName=main&jobName=win&configuration=win%20win_64_cuda_compiler_version12.9" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>win_64_cuda_compiler_version13.0</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=25430&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/libnvimgcodec-feedstock?branchName=main&jobName=win&configuration=win%20win_64_cuda_compiler_version13.0" alt="variant">
-                </a>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </details>
     </td>
   </tr>
 </table>
@@ -139,31 +107,73 @@ conda config --add channels conda-forge
 conda config --set channel_priority strict
 ```
 
-Once the `conda-forge` channel has been enabled, `libnvimgcodec, libnvimgcodec-dev, libnvimgcodec-libjpeg-turbo-ext, libnvimgcodec-libopencv-ext, libnvimgcodec-libtiff-ext, libnvimgcodec0` can be installed with `conda`:
+How to use
+----------
+
+<details>
+<summary>With conda</summary>
 
 ```
 conda install libnvimgcodec libnvimgcodec-dev libnvimgcodec-libjpeg-turbo-ext libnvimgcodec-libopencv-ext libnvimgcodec-libtiff-ext libnvimgcodec0
 ```
 
-or with `mamba`:
+</details>
+
+<details>
+<summary>With mamba</summary>
 
 ```
 mamba install libnvimgcodec libnvimgcodec-dev libnvimgcodec-libjpeg-turbo-ext libnvimgcodec-libopencv-ext libnvimgcodec-libtiff-ext libnvimgcodec0
 ```
 
-It is possible to list all of the versions of `libnvimgcodec` available on your platform with `conda`:
+</details>
+
+<details>
+<summary>With pixi</summary>
+
+```
+# for adding to your local project
+pixi add libnvimgcodec libnvimgcodec-dev libnvimgcodec-libjpeg-turbo-ext libnvimgcodec-libopencv-ext libnvimgcodec-libtiff-ext libnvimgcodec0
+# for installing globally
+pixi global install libnvimgcodec libnvimgcodec-dev libnvimgcodec-libjpeg-turbo-ext libnvimgcodec-libopencv-ext libnvimgcodec-libtiff-ext libnvimgcodec0
+```
+
+</details>
+
+Search package versions
+-----------------------
+
+It is possible to list all of the versions of `libnvimgcodec` available on your platform:
+
+<details>
+<summary>With conda</summary>
 
 ```
 conda search libnvimgcodec --channel conda-forge
 ```
 
-or with `mamba`:
+</details>
+
+<details>
+<summary>With mamba</summary>
 
 ```
 mamba search libnvimgcodec --channel conda-forge
 ```
 
-Alternatively, `mamba repoquery` may provide more information:
+</details>
+
+<details>
+<summary>With pixi</summary>
+
+```
+pixi search libnvimgcodec --channel conda-forge
+```
+
+</details>
+
+<details>
+<summary>With mamba repoquery, which may provide more information</summary>
 
 ```
 # Search all versions available on your platform:
@@ -175,6 +185,9 @@ mamba repoquery whoneeds libnvimgcodec --channel conda-forge
 # List dependencies of `libnvimgcodec`:
 mamba repoquery depends libnvimgcodec --channel conda-forge
 ```
+
+</details>
+
 
 
 About conda-forge
@@ -191,9 +204,7 @@ for each of the installable packages. Such a repository is known as a *feedstock
 A feedstock is made up of a conda recipe (the instructions on what and how to build
 the package) and the necessary configurations for automatic building using freely
 available continuous integration services. Thanks to the awesome service provided by
-[Azure](https://azure.microsoft.com/en-us/services/devops/), [GitHub](https://github.com/),
-[CircleCI](https://circleci.com/), [AppVeyor](https://www.appveyor.com/),
-[Drone](https://cloud.drone.io/welcome), and [TravisCI](https://travis-ci.com/)
+[Azure](https://azure.microsoft.com/en-us/services/devops/) and [GitHub](https://github.com/)
 it is possible to build and upload installable packages to the
 [conda-forge](https://anaconda.org/conda-forge) [anaconda.org](https://anaconda.org/)
 channel for Linux, Windows and OSX respectively.
