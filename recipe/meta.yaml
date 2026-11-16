@@ -26,7 +26,7 @@ source:
     - patches/0002-BLD-Disable-non-standard-CUDA-arch-checking.patch
 
 build:
-  number: 0
+  number: 1
   skip: true  # [((cuda_compiler_version or "None") == "None")]
   # skip: true  # [((cuda_compiler_version or "") == "12.6") and ((libopencv or "") == "4.10") ]
 requirements:
