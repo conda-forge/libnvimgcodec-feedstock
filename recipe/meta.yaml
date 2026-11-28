@@ -24,6 +24,8 @@ source:
   patches:
     - patches/0001-BLD-Make-find_package-OpenCV-verbose-and-required.patch
     - patches/0002-BLD-Disable-non-standard-CUDA-arch-checking.patch
+    # https://github.com/hmaarrfk/nvImageCodec/tree/opencv5
+    - patches/0004-BLD-Accept-OpenCV-5-in-find_package-OpenCV.patch
 
 build:
   number: 1
@@ -49,7 +51,7 @@ requirements:
     - libnvtiff-dev >=0.8
     - libboost-headers
     - libjpeg-turbo
-    - libopencv >=4.9,<5
+    - libopencv
     - libopencv * headless*
     - libtiff
     - nvtx-c
@@ -278,7 +280,7 @@ outputs:
         - {{ stdlib('c') }}
         - arm-variant * {{ arm_variant_type }}  # [linux and aarch64 and cuda_compiler_version != "None"]
       host:
-        - libopencv >=4.9,<5
+        - libopencv
         - libopencv * headless*
     test:
       commands:
