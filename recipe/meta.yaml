@@ -24,9 +24,12 @@ source:
   patches:
     - patches/0001-BLD-Make-find_package-OpenCV-verbose-and-required.patch
     - patches/0002-BLD-Disable-non-standard-CUDA-arch-checking.patch
+    # https://github.com/hmaarrfk/nvImageCodec/tree/opencv-ignore-exif-orientation
+    - patches/0005-opencv_ext-Apply-parsed-EXIF-orientation-instead-of-.patch
+    - patches/0006-opencv_ext-Do-not-rotate-TIFF-twice.patch
 
 build:
-  number: 0
+  number: 1
   skip: true  # [((cuda_compiler_version or "None") == "None")]
   # skip: true  # [((cuda_compiler_version or "") == "12.6") and ((libopencv or "") == "4.10") ]
 requirements:

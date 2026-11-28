@@ -1,0 +1,347 @@
+From 0976fec83eca5ec42b588623ef0919e8a1d53ad6 Mon Sep 17 00:00:00 2001
+From: Mark Harfouche <mark.harfouche@gmail.com>
+Date: Sat, 28 Nov 2026 14:01:08 -0500
+Subject: [PATCH 2/2] opencv_ext: Do not rotate TIFF twice
+
+OpenCV's TIFF decoder applies the Orientation tag even with
+IMREAD_IGNORE_ORIENTATION, so applying the parsed orientation on top
+rotated tagged TIFFs twice. Skip our rotation for TIFF, and decline
+(ORIENTATION_UNSUPPORTED) when stored order is requested for a tagged
+TIFF, since OpenCV cannot provide it.
+---
+ extensions/opencv/opencv_decoder.cpp          |  85 +++++---
+ test/CMakeLists.txt                           |   1 +
+ .../opencv_ext_tiff_orientation_test.cpp      | 192 ++++++++++++++++++
+ 3 files changed, 245 insertions(+), 33 deletions(-)
+ create mode 100644 test/extensions/opencv_ext_tiff_orientation_test.cpp
+
+diff --git a/extensions/opencv/opencv_decoder.cpp b/extensions/opencv/opencv_decoder.cpp
+index 6bcb2a7..cd676a8 100644
+--- a/extensions/opencv/opencv_decoder.cpp
++++ b/extensions/opencv/opencv_decoder.cpp
+@@ -33,6 +33,50 @@
+ 
+ namespace opencv {
+ 
++namespace {
++
++bool isIdentityOrientation(const nvimgcodecOrientation_t& orientation)
++{
++    return orientation.rotated == 0 && !orientation.flip_x && !orientation.flip_y;
++}
++
++// OpenCV's TIFF decoder applies the TIFF Orientation tag itself and ignores
++// IMREAD_IGNORE_ORIENTATION.
++bool opencvAlwaysOrients(const char* codec_name)
++{
++    return strcmp(codec_name, "tiff") == 0;
++}
++
++// nvimgcodecOrientation_t: counter-clockwise rotation, then flips in display space.
++void applyOrientation(cv::Mat& img, const nvimgcodecOrientation_t& orientation)
++{
++    cv::Mat rotated;
++    switch (orientation.rotated) {
++    case 90:
++        cv::rotate(img, rotated, cv::ROTATE_90_COUNTERCLOCKWISE);
++        img = rotated;
++        break;
++    case 180:
++        cv::rotate(img, rotated, cv::ROTATE_180);
++        img = rotated;
++        break;
++    case 270:
++        cv::rotate(img, rotated, cv::ROTATE_90_CLOCKWISE);
++        img = rotated;
++        break;
++    default:
++        break;
++    }
++    if (orientation.flip_x && orientation.flip_y)
++        cv::flip(img, img, -1);
++    else if (orientation.flip_x)
++        cv::flip(img, img, 1);
++    else if (orientation.flip_y)
++        cv::flip(img, img, 0);
++}
++
++} // namespace
++
+ struct DecoderImpl
+ {
+     DecoderImpl(const char* plugin_id, const nvimgcodecFrameworkDesc_t* framework, const nvimgcodecExecutionParams_t* exec_params);
+@@ -205,6 +249,11 @@ nvimgcodecProcessingStatus_t DecoderImpl::canDecode(
+             break;
+         }
+ 
++        if (!params->apply_exif_orientation && opencvAlwaysOrients(cs_image_info.codec_name) &&
++            !isIdentityOrientation(image_info.orientation)) {
++            status |= NVIMGCODEC_PROCESSING_STATUS_ORIENTATION_UNSUPPORTED;
++        }
++
+         if (tile_geometry.tile_offset_x > 0 || tile_geometry.tile_offset_y > 0) {
+             NVIMGCODEC_LOG_ERROR(framework_, plugin_id_, "Non-zero tile offsets are not supported");
+             status |= NVIMGCODEC_PROCESSING_STATUS_TILING_UNSUPPORTED;
+@@ -294,38 +343,6 @@ nvimgcodecStatus_t DecoderImpl::static_destroy(nvimgcodecDecoder_t decoder)
+     return NVIMGCODEC_STATUS_SUCCESS;
+ }
+ 
+-namespace {
+-
+-// nvimgcodecOrientation_t: counter-clockwise rotation, then flips in display space.
+-void applyOrientation(cv::Mat& img, const nvimgcodecOrientation_t& orientation)
+-{
+-    cv::Mat rotated;
+-    switch (orientation.rotated) {
+-    case 90:
+-        cv::rotate(img, rotated, cv::ROTATE_90_COUNTERCLOCKWISE);
+-        img = rotated;
+-        break;
+-    case 180:
+-        cv::rotate(img, rotated, cv::ROTATE_180);
+-        img = rotated;
+-        break;
+-    case 270:
+-        cv::rotate(img, rotated, cv::ROTATE_90_CLOCKWISE);
+-        img = rotated;
+-        break;
+-    default:
+-        break;
+-    }
+-    if (orientation.flip_x && orientation.flip_y)
+-        cv::flip(img, img, -1);
+-    else if (orientation.flip_x)
+-        cv::flip(img, img, 1);
+-    else if (orientation.flip_y)
+-        cv::flip(img, img, 0);
+-}
+-
+-} // namespace
+-
+ nvimgcodecStatus_t DecoderImpl::decode(
+     const nvimgcodecImageDesc_t* image, const nvimgcodecCodeStreamDesc_t* code_stream, const nvimgcodecDecodeParams_t* params, int thread_idx)
+ {
+@@ -394,7 +411,9 @@ nvimgcodecStatus_t DecoderImpl::decode(
+             image->imageReady(image->instance, NVIMGCODEC_PROCESSING_STATUS_NUM_CHANNELS_UNSUPPORTED);
+             return NVIMGCODEC_STATUS_EXECUTION_FAILED;
+         }
+-        if (params->apply_exif_orientation) {
++        nvimgcodecImageInfo_t cs_image_info{NVIMGCODEC_STRUCTURE_TYPE_IMAGE_INFO, sizeof(nvimgcodecImageInfo_t), nullptr};
++        code_stream->getImageInfo(code_stream->instance, &cs_image_info);
++        if (params->apply_exif_orientation && !opencvAlwaysOrients(cs_image_info.codec_name)) {
+             applyOrientation(decoded, image_info.orientation);
+         }
+ 
+diff --git a/test/CMakeLists.txt b/test/CMakeLists.txt
+index 85f5625..21523c0 100644
+--- a/test/CMakeLists.txt
++++ b/test/CMakeLists.txt
+@@ -140,6 +140,7 @@ endif()
+ if (BUILD_OPENCV_EXT)
+     list(APPEND SRCS extensions/opencv_ext_encoder_test.cpp)
+     list(APPEND SRCS extensions/opencv_ext_decoder_test.cpp)
++    list(APPEND SRCS extensions/opencv_ext_tiff_orientation_test.cpp)
+ endif()
+ 
+ if (BUILD_NVBMP_EXT)
+diff --git a/test/extensions/opencv_ext_tiff_orientation_test.cpp b/test/extensions/opencv_ext_tiff_orientation_test.cpp
+new file mode 100644
+index 0000000..1db577c
+--- /dev/null
++++ b/test/extensions/opencv_ext_tiff_orientation_test.cpp
+@@ -0,0 +1,192 @@
++/*
++ * SPDX-License-Identifier: Apache-2.0
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++// OpenCV's TIFF decoder applies the TIFF Orientation tag itself, even with
++// IMREAD_IGNORE_ORIENTATION. The resources/tiff/exif_orientation files all store
++// the same pixels and differ only in that tag, so the expected display image is a
++// fixed transform of the untagged file.
++
++#include <gtest/gtest.h>
++#include <nvimgcodec.h>
++#include <opencv2/core.hpp>
++#include <test_utils.h>
++#include <parsers/tiff.h>
++#include <parsers/parser_test_utils.h>
++#include <extensions/opencv/opencv_ext.h>
++#include <functional>
++#include <string>
++#include <tuple>
++#include <vector>
++#include "nvimgcodec_tests.h"
++
++namespace nvimgcodec { namespace test {
++
++namespace {
++
++const char* kDir = "/tiff/exif_orientation/cat-1046544_640_";
++
++cv::Mat identity(const cv::Mat& m) { return m.clone(); }
++cv::Mat flipLR(const cv::Mat& m) { cv::Mat o; cv::flip(m, o, 1); return o; }
++cv::Mat flipUD(const cv::Mat& m) { cv::Mat o; cv::flip(m, o, 0); return o; }
++cv::Mat rot180(const cv::Mat& m) { cv::Mat o; cv::rotate(m, o, cv::ROTATE_180); return o; }
++cv::Mat rotCW(const cv::Mat& m) { cv::Mat o; cv::rotate(m, o, cv::ROTATE_90_CLOCKWISE); return o; }
++cv::Mat rotCCW(const cv::Mat& m) { cv::Mat o; cv::rotate(m, o, cv::ROTATE_90_COUNTERCLOCKWISE); return o; }
++cv::Mat transposed(const cv::Mat& m) { cv::Mat o; cv::transpose(m, o); return o; }
++cv::Mat transverse(const cv::Mat& m) { return rot180(transposed(m)); }
++
++// file suffix, TIFF Orientation tag, transform from stored pixels to display
++using Case = std::tuple<const char*, int, std::function<cv::Mat(const cv::Mat&)>>;
++const std::vector<Case> kCases = {
++    {"horizontal", 1, identity},
++    {"mirror_horizontal", 2, flipLR},
++    {"rotate_180", 3, rot180},
++    {"mirror_vertical", 4, flipUD},
++    {"mirror_horizontal_rotate_270", 5, transposed},
++    {"rotate_90", 6, rotCW},
++    {"mirror_horizontal_rotate_90", 7, transverse},
++    {"rotate_270", 8, rotCCW},
++};
++
++} // namespace
++
++class OpenCVExtTiffOrientationTest : public ::testing::TestWithParam<size_t>
++{
++  public:
++    void SetUp() override
++    {
++        nvimgcodecInstanceCreateInfo_t create_info{NVIMGCODEC_STRUCTURE_TYPE_INSTANCE_CREATE_INFO, sizeof(nvimgcodecInstanceCreateInfo_t), 0};
++        create_info.create_debug_messenger = 1;
++        create_info.message_severity = NVIMGCODEC_DEBUG_MESSAGE_SEVERITY_DEFAULT;
++        create_info.message_category = NVIMGCODEC_DEBUG_MESSAGE_CATEGORY_ALL;
++        ASSERT_EQ(NVIMGCODEC_STATUS_SUCCESS, nvimgcodecInstanceCreate(&instance_, &create_info));
++
++        nvimgcodecExtensionDesc_t tiff_parser_desc{NVIMGCODEC_STRUCTURE_TYPE_EXTENSION_DESC, sizeof(nvimgcodecExtensionDesc_t), 0};
++        ASSERT_EQ(NVIMGCODEC_STATUS_SUCCESS, get_tiff_parser_extension_desc(&tiff_parser_desc));
++        extensions_.emplace_back();
++        ASSERT_EQ(NVIMGCODEC_STATUS_SUCCESS, nvimgcodecExtensionCreate(instance_, &extensions_.back(), &tiff_parser_desc));
++
++        nvimgcodecExtensionDesc_t opencv_desc{NVIMGCODEC_STRUCTURE_TYPE_EXTENSION_DESC, sizeof(nvimgcodecExtensionDesc_t), 0};
++        ASSERT_EQ(NVIMGCODEC_STATUS_SUCCESS, get_opencv_extension_desc(&opencv_desc));
++        extensions_.emplace_back();
++        ASSERT_EQ(NVIMGCODEC_STATUS_SUCCESS, nvimgcodecExtensionCreate(instance_, &extensions_.back(), &opencv_desc));
++
++        backend_ = nvimgcodecBackend_t{NVIMGCODEC_STRUCTURE_TYPE_BACKEND, sizeof(nvimgcodecBackend_t), nullptr,
++            NVIMGCODEC_BACKEND_KIND_CPU_ONLY, {NVIMGCODEC_STRUCTURE_TYPE_BACKEND_PARAMS, sizeof(nvimgcodecBackendParams_t), nullptr, 1.0f}};
++        nvimgcodecExecutionParams_t exec_params{NVIMGCODEC_STRUCTURE_TYPE_EXECUTION_PARAMS, sizeof(nvimgcodecExecutionParams_t), 0};
++        exec_params.device_id = NVIMGCODEC_DEVICE_CURRENT;
++        exec_params.max_num_cpu_threads = 1;
++        exec_params.num_backends = 1;
++        exec_params.backends = &backend_;
++        ASSERT_EQ(NVIMGCODEC_STATUS_SUCCESS, nvimgcodecDecoderCreate(instance_, &decoder_, &exec_params, nullptr));
++    }
++
++    void TearDown() override
++    {
++        if (decoder_) {
++            ASSERT_EQ(NVIMGCODEC_STATUS_SUCCESS, nvimgcodecDecoderDestroy(decoder_));
++        }
++        for (auto& ext : extensions_) {
++            ASSERT_EQ(NVIMGCODEC_STATUS_SUCCESS, nvimgcodecExtensionDestroy(ext));
++        }
++        ASSERT_EQ(NVIMGCODEC_STATUS_SUCCESS, nvimgcodecInstanceDestroy(instance_));
++    }
++
++    // Decodes to interleaved RGB host memory. Returns the processing status; on
++    // success *out holds the image.
++    nvimgcodecProcessingStatus_t Decode(const std::string& suffix, int apply_exif_orientation, cv::Mat* out, int* tag_rotated = nullptr)
++    {
++        nvimgcodecCodeStream_t cs = nullptr;
++        LoadImageFromFilename(instance_, cs, resources_dir + kDir + suffix + ".tiff");
++        nvimgcodecImageInfo_t info{NVIMGCODEC_STRUCTURE_TYPE_IMAGE_INFO, sizeof(nvimgcodecImageInfo_t), 0};
++        EXPECT_EQ(NVIMGCODEC_STATUS_SUCCESS, nvimgcodecCodeStreamGetImageInfo(cs, &info));
++        if (tag_rotated)
++            *tag_rotated = info.orientation.rotated;
++        int h = info.plane_info[0].height;
++        int w = info.plane_info[0].width;
++        if (apply_exif_orientation && info.orientation.rotated % 180 == 90)
++            std::swap(h, w);
++        info.sample_format = NVIMGCODEC_SAMPLEFORMAT_I_RGB;
++        info.color_spec = NVIMGCODEC_COLORSPEC_SRGB;
++        info.chroma_subsampling = NVIMGCODEC_SAMPLING_444;
++        info.num_planes = 1;
++        info.plane_info[0].width = w;
++        info.plane_info[0].height = h;
++        info.plane_info[0].row_stride = static_cast<size_t>(w) * 3;
++        info.plane_info[0].num_channels = 3;
++        info.plane_info[0].sample_type = NVIMGCODEC_SAMPLE_DATA_TYPE_UINT8;
++        info.plane_info[0].precision = 0;
++        cv::Mat img(h, w, CV_8UC3, cv::Scalar::all(0));
++        info.buffer = img.data;
++        info.buffer_kind = NVIMGCODEC_IMAGE_BUFFER_KIND_STRIDED_HOST;
++
++        nvimgcodecImage_t image = nullptr;
++        EXPECT_EQ(NVIMGCODEC_STATUS_SUCCESS, nvimgcodecImageCreate(instance_, &image, &info));
++        nvimgcodecDecodeParams_t params{NVIMGCODEC_STRUCTURE_TYPE_DECODE_PARAMS, sizeof(nvimgcodecDecodeParams_t), 0};
++        params.apply_exif_orientation = apply_exif_orientation;
++        nvimgcodecFuture_t future = nullptr;
++        EXPECT_EQ(NVIMGCODEC_STATUS_SUCCESS, nvimgcodecDecoderDecode(decoder_, &cs, &image, 1, &params, &future));
++        EXPECT_EQ(NVIMGCODEC_STATUS_SUCCESS, nvimgcodecFutureWaitForAll(future));
++        nvimgcodecProcessingStatus_t status;
++        size_t status_size;
++        EXPECT_EQ(NVIMGCODEC_STATUS_SUCCESS, nvimgcodecFutureGetProcessingStatus(future, &status, &status_size));
++        EXPECT_EQ(NVIMGCODEC_STATUS_SUCCESS, nvimgcodecFutureDestroy(future));
++        EXPECT_EQ(NVIMGCODEC_STATUS_SUCCESS, nvimgcodecImageDestroy(image));
++        EXPECT_EQ(NVIMGCODEC_STATUS_SUCCESS, nvimgcodecCodeStreamDestroy(cs));
++        *out = img;
++        return status;
++    }
++
++    nvimgcodecInstance_t instance_ = nullptr;
++    nvimgcodecDecoder_t decoder_ = nullptr;
++    nvimgcodecBackend_t backend_{};
++    std::vector<nvimgcodecExtension_t> extensions_;
++};
++
++TEST_P(OpenCVExtTiffOrientationTest, AppliedOrientationMatchesTag)
++{
++    const auto& [suffix, tag, to_display] = kCases[GetParam()];
++    cv::Mat stored;
++    ASSERT_EQ(NVIMGCODEC_PROCESSING_STATUS_SUCCESS, Decode("no_orientation", 0, &stored));
++
++    cv::Mat decoded;
++    ASSERT_EQ(NVIMGCODEC_PROCESSING_STATUS_SUCCESS, Decode(suffix, 1, &decoded)) << "tag " << tag;
++    cv::Mat expected = to_display(stored);
++    ASSERT_EQ(expected.size(), decoded.size()) << "tag " << tag;
++    EXPECT_EQ(0, cv::norm(expected, decoded, cv::NORM_INF)) << "tag " << tag << " was not applied exactly once";
++}
++
++TEST_P(OpenCVExtTiffOrientationTest, StoredOrderRequestIsDeclinedOrExact)
++{
++    const auto& [suffix, tag, to_display] = kCases[GetParam()];
++    cv::Mat stored;
++    ASSERT_EQ(NVIMGCODEC_PROCESSING_STATUS_SUCCESS, Decode("no_orientation", 0, &stored));
++
++    cv::Mat decoded;
++    auto status = Decode(suffix, 0, &decoded);
++    if (tag == 1) {
++        ASSERT_EQ(NVIMGCODEC_PROCESSING_STATUS_SUCCESS, status);
++        EXPECT_EQ(0, cv::norm(stored, decoded, cv::NORM_INF));
++    } else {
++        // OpenCV cannot return TIFF pixels in stored order, so the plugin must
++        // decline rather than hand back a rotated image.
++        EXPECT_EQ(NVIMGCODEC_PROCESSING_STATUS_ORIENTATION_UNSUPPORTED, status) << "tag " << tag;
++    }
++}
++
++INSTANTIATE_TEST_SUITE_P(OPENCV_TIFF_ORIENTATION, OpenCVExtTiffOrientationTest, ::testing::Range<size_t>(0, kCases.size()),
++    [](const ::testing::TestParamInfo<size_t>& info) { return std::string(std::get<0>(kCases[info.param])); });
++
++}} // namespace nvimgcodec::test
+-- 
+2.56.1
+

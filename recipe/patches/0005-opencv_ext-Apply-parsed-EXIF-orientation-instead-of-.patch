@@ -1,0 +1,84 @@
+From 82f3c07ee054e676f2dc838c8949842de2967ad8 Mon Sep 17 00:00:00 2001
+From: Mark Harfouche <mark.harfouche@gmail.com>
+Date: Sat, 28 Nov 2026 13:35:06 -0500
+Subject: [PATCH 1/2] opencv_ext: Apply parsed EXIF orientation instead of
+ OpenCV's
+
+Which formats and EXIF tags imdecode honours differs between OpenCV
+releases, so the decoded shape could disagree with the orientation
+nvImageCodec's parsers report. Always pass IMREAD_IGNORE_ORIENTATION and
+apply image_info.orientation with cv::rotate/cv::flip.
+---
+ extensions/opencv/opencv_decoder.cpp | 42 ++++++++++++++++++++++++++--
+ 1 file changed, 40 insertions(+), 2 deletions(-)
+
+diff --git a/extensions/opencv/opencv_decoder.cpp b/extensions/opencv/opencv_decoder.cpp
+index f09c929..6bcb2a7 100644
+--- a/extensions/opencv/opencv_decoder.cpp
++++ b/extensions/opencv/opencv_decoder.cpp
+@@ -294,6 +294,38 @@ nvimgcodecStatus_t DecoderImpl::static_destroy(nvimgcodecDecoder_t decoder)
+     return NVIMGCODEC_STATUS_SUCCESS;
+ }
+ 
++namespace {
++
++// nvimgcodecOrientation_t: counter-clockwise rotation, then flips in display space.
++void applyOrientation(cv::Mat& img, const nvimgcodecOrientation_t& orientation)
++{
++    cv::Mat rotated;
++    switch (orientation.rotated) {
++    case 90:
++        cv::rotate(img, rotated, cv::ROTATE_90_COUNTERCLOCKWISE);
++        img = rotated;
++        break;
++    case 180:
++        cv::rotate(img, rotated, cv::ROTATE_180);
++        img = rotated;
++        break;
++    case 270:
++        cv::rotate(img, rotated, cv::ROTATE_90_CLOCKWISE);
++        img = rotated;
++        break;
++    default:
++        break;
++    }
++    if (orientation.flip_x && orientation.flip_y)
++        cv::flip(img, img, -1);
++    else if (orientation.flip_x)
++        cv::flip(img, img, 1);
++    else if (orientation.flip_y)
++        cv::flip(img, img, 0);
++}
++
++} // namespace
++
+ nvimgcodecStatus_t DecoderImpl::decode(
+     const nvimgcodecImageDesc_t* image, const nvimgcodecCodeStreamDesc_t* code_stream, const nvimgcodecDecodeParams_t* params, int thread_idx)
+ {
+@@ -340,8 +372,10 @@ nvimgcodecStatus_t DecoderImpl::decode(
+         int flags = num_channels > 1 ? cv::IMREAD_COLOR : cv::IMREAD_GRAYSCALE;
+         if (num_channels > 3)
+             flags |= cv::IMREAD_UNCHANGED;
+-        if (!params->apply_exif_orientation)
+-            flags |= cv::IMREAD_IGNORE_ORIENTATION;
++        // Never let OpenCV apply EXIF orientation. Which formats and tags it honours differs
++        // between OpenCV releases, which made the output shape disagree with the orientation
++        // reported by nvImageCodec's parsers. Apply the parsed orientation ourselves instead.
++        flags |= cv::IMREAD_IGNORE_ORIENTATION;
+         if (image_info.plane_info[0].sample_type != NVIMGCODEC_SAMPLE_DATA_TYPE_UINT8)
+             flags |= cv::IMREAD_ANYDEPTH;
+ 
+@@ -360,6 +394,10 @@ nvimgcodecStatus_t DecoderImpl::decode(
+             image->imageReady(image->instance, NVIMGCODEC_PROCESSING_STATUS_NUM_CHANNELS_UNSUPPORTED);
+             return NVIMGCODEC_STATUS_EXECUTION_FAILED;
+         }
++        if (params->apply_exif_orientation) {
++            applyOrientation(decoded, image_info.orientation);
++        }
++
+         if (codestream_info.code_stream_view ){
+             auto region = codestream_info.code_stream_view->region;
+             if (region.ndim != 0) {
+-- 
+2.56.1
+
