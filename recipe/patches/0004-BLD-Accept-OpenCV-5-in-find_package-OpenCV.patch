@@ -1,0 +1,45 @@
+From a95fca20a9b6d9f0b243c2e62fc879814e7512e7 Mon Sep 17 00:00:00 2001
+From: Mark Harfouche <mark.harfouche@gmail.com>
+Date: Sat, 28 Nov 2026 10:14:56 -0500
+Subject: [PATCH 3/3] BLD: Accept OpenCV 5 in find_package(OpenCV)
+
+OpenCVConfig-version.cmake only matches requests with the same major
+version, so find_package(OpenCV 4.9) silently rejects OpenCV 5.x and the
+opencv extension is disabled. Look up OpenCV without a version and check
+the 4.9 minimum by hand.
+---
+ cmake/Dependencies.cmake | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/cmake/Dependencies.cmake b/cmake/Dependencies.cmake
+index 4f83c75..9ca744e 100644
+--- a/cmake/Dependencies.cmake
++++ b/cmake/Dependencies.cmake
+@@ -192,7 +192,14 @@ if (NOT DEFINED OpenCV_VERSION AND (BUILD_OPENCV_EXT OR BUILD_TEST))
+     if (WIN32)
+         set(OpenCV_STATIC ON)
+     endif()
+-    find_package(OpenCV 4.9 COMPONENTS core imgproc imgcodecs REQUIRED)
++    # OpenCVConfig-version.cmake only accepts requests with the same major
++    # version, so find_package(OpenCV 4.9) rejects OpenCV 5. Check the
++    # minimum version by hand instead.
++    find_package(OpenCV COMPONENTS core imgproc imgcodecs REQUIRED)
++    if(OpenCV_FOUND AND OpenCV_VERSION VERSION_LESS 4.9)
++        message(STATUS "OpenCV ${OpenCV_VERSION} found, but 4.9 or newer is required")
++        set(OpenCV_FOUND FALSE)
++    endif()
+ 
+     if(NOT OpenCV_FOUND)
+         message(STATUS "OpenCV not found - disabled")
+@@ -205,7 +212,7 @@ if (NOT DEFINED OpenCV_VERSION AND (BUILD_OPENCV_EXT OR BUILD_TEST))
+             set(BUILD_TEST OFF)
+         endif()
+     else()
+-        message(STATUS "Found OpenCV: ${OpenCV_INCLUDE_DIRS} (found suitable version \"${OpenCV_VERSION}\", minimum required is \"4.9\")")
++        message(STATUS "Found OpenCV: ${OpenCV_INCLUDE_DIRS} (found version \"${OpenCV_VERSION}\", minimum required is \"4.9\")")
+         message(STATUS "OpenCV libraries: ${OpenCV_LIBRARIES}")
+         include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
+ 
+-- 
+2.56.1
+
